@@ -74,18 +74,14 @@ class TestCSVUnifier(unittest.TestCase):
         For a given row, if values for all fields are present and valid,
         no messages are printed, and the row is written to the output.
         """
-        rows = [['Provider Name', 'CampaignID', 'Cost Per Ad Click', 'Redirect Link', 'Phone Number', 'Address', 'Zipcode'],
-                ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1',
-                    '8675309', 'Burton Street', '78702'],
-                ["Auto R' Us", 'AUTO2', '15.00', 'autorus.com/auto1',
-                    '8675309', 'Burton Street', '78702'],
-                ["Auto R' Us", 'AUTO3', '15.00', 'autorus.com/auto1',
-                 '8675309', 'Burton Street', '78702'],
-                ["Auto R' Us", 'AUTO4', '15.00', 'autorus.com/auto1',
-                 '8675309', 'Burton Street', '78702'],
-                ["Auto R' Us", 'AUTO5', '15.00', 'autorus.com/auto1',
-                 '8675309', 'Burton Street', '78702'],
-                ]
+        rows = [
+            ['Provider Name', 'CampaignID', 'Cost Per Ad Click', 'Redirect Link', 'Phone Number', 'Address', 'Zipcode'],
+            ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
+            ["Auto R' Us", 'AUTO2', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
+            ["Auto R' Us", 'AUTO3', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
+            ["Auto R' Us", 'AUTO4', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
+            ["Auto R' Us", 'AUTO5', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
+        ]
 
         sys.stdout = new_stdout = StringIO()
         cu = CSVUnifier(
@@ -111,32 +107,17 @@ class TestCSVUnifier(unittest.TestCase):
 
         # the first two rows (including the header) are valid,
         # the rest each have a value missing
-        rows = [['Provider Name', 'CampaignID', 'Cost Per Ad Click', 'Redirect Link', 'Phone Number', 'Address', 'Zipcode'],
-                ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1',
-                    '8675309', 'Burton Street', '78702'],
-                ['AUTO2', '15.00', 'autorus.com/auto1',
-                    '8675309', 'Burton Street', '78702'],
-                ["Auto R' Us", '15.00', 'autorus.com/auto1',
-                 '8675309', 'Burton Street', '78702'],
-                ["Auto R' Us", 'AUTO4', 'autorus.com/auto1',
-                 '8675309', 'Burton Street', '78702'],
-                ["Auto R' Us", 'AUTO5', '15.00',
-                    '8675309', 'Burton Street', '78702'],
-                ["Auto R' Us",
-                 'AUTO1',
-                 '15.00',
-                 'autorus.com/auto1',
-                 'Burton Street',
-                 '78702'],
-                ["Auto R' Us", 'AUTO1', '15.00',
-                    'autorus.com/auto1', '8675309', '78702'],
-                ["Auto R' Us",
-                 'AUTO1',
-                 '15.00',
-                 'autorus.com/auto1',
-                 '8675309',
-                 'Burton Street']
-                ]
+        rows = [
+            ['Provider Name', 'CampaignID', 'Cost Per Ad Click', 'Redirect Link', 'Phone Number', 'Address', 'Zipcode'],
+            ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
+            ['AUTO2', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
+            ["Auto R' Us", '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
+            ["Auto R' Us", 'AUTO4', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
+            ["Auto R' Us", 'AUTO5', '15.00', '8675309', 'Burton Street', '78702'],
+            ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', 'Burton Street', '78702'],
+            ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', '8675309', '78702'],
+            ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street']
+        ]
 
         sys.stdout = new_stdout = StringIO()
         cu = CSVUnifier(
@@ -164,29 +145,17 @@ class TestCSVUnifier(unittest.TestCase):
 
         # the first two rows (including the header) are valid,
         # the rest each contain a non-conforming value
-        rows = [['Provider Name', 'CampaignID', 'Cost Per Ad Click', 'Redirect Link', 'Phone Number', 'Address', 'Zipcode'],
-                ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1',
-                    '8675309', 'Burton Street', '78702'],
-                ["   ", 'AUTO2', '15.00', 'autorus.com/auto1',
-                    '8675309', 'Burton Street', '78702'],
-                ["Auto R' Us", '123', '15.00', 'autorus.com/auto1',
-                    '8675309', 'Burton Street', '78702'],
-                ["Auto R' Us", 'AUTO4', '15.392040', 'autorus.com/auto1',
-                    '8675309', 'Burton Street', '78702'],
-                ["Auto R' Us", 'AUTO5', '15.00', 'autorus',
-                    '8675309', 'Burton Street', '78702'],
-                ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1',
-                    '123456', 'Burton Street', '78702'],
-                ["Auto R' Us",
-                 'AUTO1',
-                 '15.00',
-                 'autorus.com/auto1',
-                 '8675309',
-                 'Burton',
-                 '78702'],
-                ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1',
-                    '8675309', 'Burton Street', '7870']
-                ]
+        rows = [
+            ['Provider Name', 'CampaignID', 'Cost Per Ad Click', 'Redirect Link', 'Phone Number', 'Address', 'Zipcode'],
+            ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
+            ["   ", 'AUTO2', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
+            ["Auto R' Us", '123', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
+            ["Auto R' Us", 'AUTO4', '15.392040', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
+            ["Auto R' Us", 'AUTO5', '15.00', 'autorus', '8675309', 'Burton Street', '78702'],
+            ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', '123456', 'Burton Street', '78702'],
+            ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', '8675309', 'Burton', '78702'],
+            ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '7870']
+        ]
 
         sys.stdout = new_stdout = StringIO()
         cu = CSVUnifier(
@@ -211,11 +180,15 @@ class TestCSVUnifier(unittest.TestCase):
         Columns not listed in the schema are ignored.
         No error messages are printed.
         """
-        rows = [['Provider Name', 'CampaignID', 'AccountId', 'Cost Per Ad Click', 'Redirect Link', 'Phone Number', 'Address', 'Zipcode', 'Favorite Animal'],
-                ["Auto R' Us", 'AUTO1', '4', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702', 'Cat']]
+        rows = [
+            ['Provider Name', 'CampaignID', 'AccountId', 'Cost Per Ad Click', 'Redirect Link', 'Phone Number', 'Address', 'Zipcode', 'Favorite Animal'],
+            ["Auto R' Us", 'AUTO1', '4', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702', 'Cat']
+        ]
 
-        rows_expected_output = [['Provider Name', 'CampaignID', 'Cost Per Ad Click', 'Redirect Link', 'Phone Number', 'Address', 'Zipcode'],
-                                ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702']]
+        rows_expected_output = [
+            ['Provider Name', 'CampaignID', 'Cost Per Ad Click', 'Redirect Link', 'Phone Number', 'Address', 'Zipcode'],
+            ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702']
+        ]
 
         sys.stdout = new_stdout = StringIO()
         cu = CSVUnifier(
