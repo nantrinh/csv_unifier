@@ -16,8 +16,10 @@ from main import CSVUnifier
 class TestCSVUnifier(unittest.TestCase):
     def setUp(self):
         self.output_file = StringIO() 
-        self.batch_size = 2 
-        self.row_error_prefix = 'Invalid row: '
+        self.BATCH_SIZE = 2 
+        self.COLUMN_MISSING_ERROR = 'All columns in schema must be present'
+        self.INVALID_ROW_ERROR = 'Invalid row: '
+
         self.orig_stdout = sys.stdout 
 
     def written(self, obj):
@@ -42,12 +44,12 @@ class TestCSVUnifier(unittest.TestCase):
         for i in range(len(header)):
             sys.stdout = new_stdout = StringIO()
             rows = [header[:i] + header[i + 1:], data[:i] + data[i + 1:]]
-            cu = CSVUnifier(batch_size=self.batch_size, output_file=self.output_file)
+            cu = CSVUnifier(batch_size=self.BATCH_SIZE, output_file=self.output_file)
             cu.reset_header()
             cu.process(rows)
             cu.clean_up()
 
-            self.assertEqual('All columns in schema must be present', new_stdout.getvalue().strip())
+            self.assertEqual(self.COLUMN_MISSING_ERROR, new_stdout.getvalue().strip())
             self.assertEqual(0, len(self.output_file.getvalue()))
 
     @unittest.skip('')
@@ -65,7 +67,7 @@ class TestCSVUnifier(unittest.TestCase):
          ]
 
         sys.stdout = new_stdout = StringIO()
-        cu = CSVUnifier(batch_size=self.batch_size, output_file=self.output_file) 
+        cu = CSVUnifier(batch_size=self.BATCH_SIZE, output_file=self.output_file) 
         cu.reset_header()
         cu.process(rows)
         cu.clean_up()
@@ -95,7 +97,7 @@ class TestCSVUnifier(unittest.TestCase):
          ]
 
         sys.stdout = new_stdout = StringIO()
-        cu = CSVUnifier(batch_size=self.batch_size, output_file=self.output_file) 
+        cu = CSVUnifier(batch_size=self.BATCH_SIZE, output_file=self.output_file) 
         cu.reset_header()
         cu.process(rows)
         cu.clean_up()
@@ -108,7 +110,7 @@ class TestCSVUnifier(unittest.TestCase):
         stdout_list = self.stdout_list(new_stdout)
         self.assertEqual(len(rows) - 2, len(stdout_list))
         for i, line in enumerate(stdout_list):
-            self.assertEqual(self.row_error_prefix + str(rows[i + 2]), line)
+            self.assertEqual(self.INVALID_ROW_ERROR + str(rows[i + 2]), line)
 
     @unittest.skip('')
     def test_nonconforming_data(self):
@@ -131,7 +133,7 @@ class TestCSVUnifier(unittest.TestCase):
                ]
 
         sys.stdout = new_stdout = StringIO()
-        cu = CSVUnifier(batch_size=self.batch_size, output_file=self.output_file) 
+        cu = CSVUnifier(batch_size=self.BATCH_SIZE, output_file=self.output_file) 
         cu.reset_header()
         cu.process(rows)
         cu.clean_up()
@@ -154,7 +156,7 @@ class TestCSVUnifier(unittest.TestCase):
          ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702']]
 
         sys.stdout = new_stdout = StringIO()
-        cu = CSVUnifier(batch_size=self.batch_size, output_file=self.output_file) 
+        cu = CSVUnifier(batch_size=self.BATCH_SIZE, output_file=self.output_file) 
         cu.reset_header()
         cu.process(rows)
         cu.clean_up()
