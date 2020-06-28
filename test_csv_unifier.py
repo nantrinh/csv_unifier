@@ -24,13 +24,8 @@ class TestCSVUnifier(unittest.TestCase):
 
     def test_all_columns_are_present(self):
         """
-        Required headers must be present
-
-        For each item in header, passes the rest of the header excluding that item,
-        and the data excluding that column.
-
-        An error message should be printed.
-        Nothing should be written to the output.
+        If one or more headers from the schema are missing,
+        an error message is printed, and nothing is written to the output. 
         """
 
         header = ['Provider Name', 'CampaignID', 'Cost Per Ad Click', 'Redirect Link', 'Phone Number', 'Address', 'Zipcode']
