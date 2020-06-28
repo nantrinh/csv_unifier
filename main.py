@@ -3,12 +3,13 @@ import ipdb
 
 import validator as v
 
+
 class Batch:
     def __init__(self, capacity, flush_function):
         self.data = []
-        self.flush_function = flush_function 
+        self.flush_function = flush_function
         self.capacity = capacity
-    
+
     def add(self, item):
         self.data.append(item)
         print(f'Number of items: {len(self.data)}')
@@ -16,12 +17,13 @@ class Batch:
             print(f'flushing {self.data}')
             self.flush()
             self.reset()
-    
+
     def reset(self):
         self.data = []
 
     def flush(self):
         self.flush_function(self.data)
+
 
 class CSVUnifier:
 
@@ -34,16 +36,17 @@ class CSVUnifier:
              'CampaignID': v.campaign_id}
 
     def __init__(self, batch_size, output_file):
-        writer = csv.writer(output_file, delimiter=',')
-        self.batch = Batch(batch_size, writer.writerows) 
+        write_function = csv.writer(output_file, delimiter=',', lineterminator='\n').writerows
+        self.batch = Batch(batch_size, write_function)
         self.header = None
 
     def process(self, rows):
         for r in rows:
             if self.header is None:
-                self.header = r 
+                self.header = r
                 self.filtered_header = [h for h in r if h in self.valid]
-                if len(self.filtered_header) != len(valid.keys):
+                if len(self.filtered_header) != len(self.valid.keys()):
+                    # print(self.filtered_header)
                     print(f'All columns in schema must be present')
                     return
                 self.batch.add(self.filtered_header)
@@ -53,7 +56,7 @@ class CSVUnifier:
                     self.batch.add(filtered_row)
                 else:
                     print(f'Invalid row: {r}')
-    
+
     def valid_row(self, row):
         if len(row) != len(self.filtered_header):
             return False
@@ -70,8 +73,9 @@ class CSVUnifier:
         self.header = None
 
     def clean_up(self):
-        print('Cleaning up')
+        # print('Cleaning up')
         self.batch.flush()
+
 
 if __name__ == "__main__":
     input_filenames = ['auto.csv', 'home.csv']
@@ -79,11 +83,11 @@ if __name__ == "__main__":
     batch_size = 3
 
     with open(output_filename, 'w', newline='\n') as output_file:
-        csv_unifier = CSVUnifier(batch_size=batch_size, output_file=output_file)
-
-        for filename in input_filenames: 
-            csv_unifier.reset_header()
+        cu = CSVUnifier(batch_size=batch_size,
+                                 output_file=output_file)
+        for filename in input_filenames:
+            cu.reset_header()
             with open(filename, 'r', newline='\n') as csv_file:
                 rows = csv.reader(csv_file)
-                csv_unifier.process(rows)
-                csv_unifier.clean_up()    
+                cu.process(rows)
+                cu.clean_up()
