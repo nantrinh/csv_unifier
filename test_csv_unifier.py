@@ -1,7 +1,7 @@
 """
 Test CSV Unifier
 
-Note that test outputs and stdout are expected to fit in memory (StringIO is used).
+Note that test outputs and stdout are expected to fit in memory.
 """
 
 import sys
@@ -22,6 +22,10 @@ class TestCSVUnifier(unittest.TestCase):
 
         self.orig_stdout = sys.stdout 
 
+    def written(self):
+        return [row.split(',') for row in self.output_file.getvalue().strip().split('\n')]
+
+
     def test_all_columns_are_present(self):
         """
         If one or more headers from the schema are missing,
@@ -40,7 +44,7 @@ class TestCSVUnifier(unittest.TestCase):
             cu.clean_up()
 
             self.assertEqual('All columns in schema must be present', new_stdout.getvalue().strip())
-            self.assertEqual('', self.output_file.getvalue())
+            self.assertEqual(0, len(self.output_file.getvalue()))
 
     def test_all_data_is_present(self):
         """
@@ -61,18 +65,17 @@ class TestCSVUnifier(unittest.TestCase):
         cu.process(rows)
         cu.clean_up()
 
-        for i, row in enumerate(csv.reader(self.output_file)):
+        sys.stdout = self.orig_stdout
+        written = self.written() 
+        self.assertEqual(len(rows), len(written))
+        for i, row in enumerate(written):
             self.assertEqual(rows[i], row)
 
-    @unittest.skip("")
+    @unittest.skip('')
     def test_missing_data(self):
         """
         When the length of a row does not match the length of the header,
         the row does not get written to the output.
-
-        TODO: Use contextmanager to temporarily replace sys.stdout to verify
-        error message is being printed
-        https://stackoverflow.com/questions/4219717/how-to-assert-output-with-nosetest-unittest-in-python
         """
 
         # the first row is valid, the rest each have a value missing
@@ -87,19 +90,17 @@ class TestCSVUnifier(unittest.TestCase):
          ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street']
          ]
 
-        with open(self.output_filename, 'w', newline='\n') as output_file:
-            cu = CSVUnifier(batch_size=self.batch_size, output_file=output_file) 
-            cu.reset_header()
-            cu.process(rows)
-            cu.clean_up()
+        cu = CSVUnifier(batch_size=self.batch_size, output_file=self.output_file) 
+        cu.reset_header()
+        cu.process(rows)
+        cu.clean_up()
 
-        with open(self.output_filename) as output_file:
-            ctr = 0
-            for i, row in enumerate(csv.reader(output_file)):
-                ctr += 1
-                if i <= 1:
-                    self.assertEqual(rows[i], row)
-            self.assertEqual(2, ctr)
+        ctr = 0
+        for i, row in enumerate(csv.reader(self.output_file)):
+            ctr += 1
+            if i <= 1:
+                self.assertEqual(rows[i], row)
+        self.assertEqual(2, ctr)
 
     @unittest.skip('')
     def test_nonconforming_data(self):
