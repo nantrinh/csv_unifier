@@ -34,8 +34,7 @@ class TestCSVUnifier(unittest.TestCase):
         for i in range(len(header)):
             sys.stdout = new_stdout = StringIO()
             rows = [header[:i] + header[i + 1:], data[:i] + data[i + 1:]]
-            cu = CSVUnifier(batch_size=self.batch_size,
-                            output_file=self.output_file)
+            cu = CSVUnifier(batch_size=self.batch_size, output_file=self.output_file)
             cu.reset_header()
             cu.process(rows)
             cu.clean_up()
@@ -43,10 +42,10 @@ class TestCSVUnifier(unittest.TestCase):
             self.assertEqual('All columns in schema must be present', new_stdout.getvalue().strip())
             self.assertEqual('', self.output_file.getvalue())
 
-    @unittest.skip("")
     def test_all_data_is_present(self):
         """
-        When values for all fields are present and valid, they are written to the output.
+        For a given row, if values for all fields are present and valid,
+        the row is written to the output.
         """
         rows = [['Provider Name', 'CampaignID', 'Cost Per Ad Click', 'Redirect Link', 'Phone Number', 'Address', 'Zipcode'],
          ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
@@ -56,15 +55,14 @@ class TestCSVUnifier(unittest.TestCase):
          ["Auto R' Us", 'AUTO5', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
          ]
 
-        with open(self.output_filename, 'w', newline='\n') as output_file:
-            cu = CSVUnifier(batch_size=self.batch_size, output_file=output_file) 
-            cu.reset_header()
-            cu.process(rows)
-            cu.clean_up()
+        sys.stdout = new_stdout = StringIO()
+        cu = CSVUnifier(batch_size=self.batch_size, output_file=self.output_file) 
+        cu.reset_header()
+        cu.process(rows)
+        cu.clean_up()
 
-        with open(self.output_filename) as output_file:
-            for i, row in enumerate(csv.reader(output_file)):
-                self.assertEqual(rows[i], row)
+        for i, row in enumerate(csv.reader(self.output_file)):
+            self.assertEqual(rows[i], row)
 
     @unittest.skip("")
     def test_missing_data(self):
