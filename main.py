@@ -22,6 +22,7 @@ class Batch:
 
     def flush(self):
         self.flush_function(self.data)
+        self.data = []
 
 
 class CSVUnifier:
@@ -58,6 +59,7 @@ class CSVUnifier:
         self.batch = Batch(batch_size, write_function)
         self.header = None
         self.header_map = {}
+        self.header_written = False
 
     def process(self, rows):
         for r in rows:
@@ -67,7 +69,9 @@ class CSVUnifier:
                     print(f'All columns in schema must be present')
                     return
                 self.header = r
-                self.batch.add(self.SCHEMA)
+                if not self.header_written:
+                    self.batch.add(self.SCHEMA)
+                    self.header_written = True
             else:
                 rf_row = self.reorder_and_filter(r)
                 if self.valid_row(rf_row):
@@ -98,6 +102,7 @@ class CSVUnifier:
 
     def reset_header(self):
         self.header = None
+        self.header_map = {}
 
     def clean_up(self):
         # print('Cleaning up')
@@ -109,7 +114,7 @@ if __name__ == "__main__":
     output_filename = 'output.csv'
     batch_size = 3
 
-    with open(output_filename, 'w', newline='\n') as output_file:
+    with open(output_filename, 'w') as output_file:
         cu = CSVUnifier(batch_size=batch_size, output_file=output_file)
         for filename in input_filenames:
             cu.reset_header()
