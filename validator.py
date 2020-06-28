@@ -29,7 +29,7 @@ def redirect_link(s):
     return re.match('^[a-z\d]+\.[a-z\d]+\/?[a-z\d]*$', s, re.IGNORECASE)
 
 def phone_number(s):
-    return s.isnumeric() and len(s) == 7
+    return len(s) == 0 or s.isnumeric() and len(s) == 7
 
 def address(s):
     return re.match('^[a-z]+ [a-z]+$', s, re.IGNORECASE)
