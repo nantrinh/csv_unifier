@@ -1,5 +1,4 @@
 import csv
-import ipdb
 
 import validator as v
 
@@ -12,9 +11,9 @@ class Batch:
 
     def add(self, item):
         self.data.append(item)
-        print(f'Number of items: {len(self.data)}')
+        # print(f'Number of items: {len(self.data)}')
         if len(self.data) == self.capacity:
-            print(f'flushing {self.data}')
+            # print(f'flushing {self.data}')
             self.flush()
             self.reset()
 
@@ -26,48 +25,76 @@ class Batch:
 
 
 class CSVUnifier:
+    """
+    All columns in the schema must be present in the input data.
+    Rows are validated before written to an output file in batches.
+    Rows are always written in the order specified in the schema.
+    """
 
-    valid = {'Provider Name': v.provider_name,
-             'Zipcode': v.zipcode,
-             'Cost Per Ad Click': v.cost_per_ad_click,
-             'Redirect Link': v.redirect_link,
-             'Phone Number': v.phone_number,
-             'Address': v.address,
-             'CampaignID': v.campaign_id}
+    SCHEMA = [
+        'Provider Name',
+        'CampaignID',
+        'Cost Per Ad Click',
+        'Redirect Link',
+        'Phone Number',
+        'Address',
+        'Zipcode',
+        ]
+
+    VALID = {
+        'Provider Name': v.provider_name,
+        'CampaignID': v.campaign_id,
+        'Cost Per Ad Click': v.cost_per_ad_click,
+        'Redirect Link': v.redirect_link,
+        'Phone Number': v.phone_number,
+        'Address': v.address,
+        'Zipcode': v.zipcode,
+    }
 
     def __init__(self, batch_size, output_file):
-        write_function = csv.writer(output_file, delimiter=',', lineterminator='\n').writerows
+        write_function = csv.writer(output_file,
+                                    delimiter=',',
+                                    lineterminator='\n').writerows
         self.batch = Batch(batch_size, write_function)
         self.header = None
+        self.header_map = {}
 
     def process(self, rows):
         for r in rows:
             if self.header is None:
-                self.header = r
-                self.filtered_header = [h for h in r if h in self.valid]
-                if len(self.filtered_header) != len(self.valid.keys()):
-                    # print(self.filtered_header)
+                self.make_header_map(r)
+                if len(self.SCHEMA) != len(self.header_map):
                     print(f'All columns in schema must be present')
                     return
-                self.batch.add(self.filtered_header)
+                self.header = r
+                self.batch.add(self.SCHEMA)
             else:
-                filtered_row = self.filter(r)
-                if self.valid_row(filtered_row):
-                    self.batch.add(filtered_row)
+                rf_row = self.reorder_and_filter(r)
+                if self.valid_row(rf_row):
+                    self.batch.add(rf_row)
                 else:
                     print(f'Invalid row: {r}')
 
     def valid_row(self, row):
-        if len(row) != len(self.filtered_header):
-            return False
-
-        for i, column_name in enumerate(self.filtered_header):
-            if not self.valid[column_name](row[i]):
+        for i, v in enumerate(row):
+            if not self.VALID[self.SCHEMA[i]](v):
                 return False
         return True
 
-    def filter(self, row):
-        return [v for i, v in enumerate(row) if self.header[i] in self.valid]
+    def reorder_and_filter(self, row):
+        res = ['' for x in range(len(self.SCHEMA))]
+        for i, v in enumerate(row):
+            if i in self.header_map:
+                res[self.header_map[i]] = v
+        return res
+
+    def make_header_map(self, header):
+        """
+        Maps index of a column name in header to index in schema
+        """
+        for i, name in enumerate(header):
+            if name in self.SCHEMA:
+                self.header_map[i] = self.SCHEMA.index(name)
 
     def reset_header(self):
         self.header = None
@@ -83,8 +110,7 @@ if __name__ == "__main__":
     batch_size = 3
 
     with open(output_filename, 'w', newline='\n') as output_file:
-        cu = CSVUnifier(batch_size=batch_size,
-                                 output_file=output_file)
+        cu = CSVUnifier(batch_size=batch_size, output_file=output_file)
         for filename in input_filenames:
             cu.reset_header()
             with open(filename, 'r', newline='\n') as csv_file:
