@@ -1,6 +1,8 @@
 import csv
 
 import validator as v
+# TODO: fix mistakes (see bottom of file)
+# TODO: take in a list of files as args
 
 
 class Batch:
@@ -73,23 +75,27 @@ class CSVUnifier:
                     self.batch.add(self.SCHEMA)
                     self.header_written = True
             else:
-                rf_row = self.reorder_and_filter(r)
-                if self.valid_row(rf_row):
-                    self.batch.add(rf_row)
+                clean_row = self.clean(r)
+                if self.valid_row(clean_row):
+                    self.batch.add(clean_row)
                 else:
-                    print(f'Invalid row: {r}')
+                    print(f'Invalid row: {clean_row}')
 
     def valid_row(self, row):
         for i, v in enumerate(row):
             if not self.VALID[self.SCHEMA[i]](v):
+                print(f'{v} is an invalid value for {self.SCHEMA[i]}')
                 return False
         return True
 
-    def reorder_and_filter(self, row):
+    def clean(self, row):
+        """
+        Cleans, reorders, and filters values in the row
+        """
         res = ['' for x in range(len(self.SCHEMA))]
         for i, v in enumerate(row):
             if i in self.header_map:
-                res[self.header_map[i]] = v
+                res[self.header_map[i]] = v.strip('"')
         return res
 
     def make_header_map(self, header):
@@ -122,3 +128,15 @@ if __name__ == "__main__":
                 rows = csv.reader(csv_file)
                 cu.process(rows)
                 cu.clean_up()
+
+    """
+    Mistakes:
+      AUTO: Tiger King Rd should be valid address
+      HOME: 6th street should be valid address
+
+    Invalid
+      AUTO
+        NoZip: null campaignid, zip
+      HOME
+        WeProtect: null address
+    """
