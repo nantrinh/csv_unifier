@@ -17,14 +17,19 @@ class TestCSVUnifier(unittest.TestCase):
     def setUp(self):
         self.output_file = StringIO() 
         self.batch_size = 2 
+        self.row_error_prefix = 'Invalid row: '
         self.orig_stdout = sys.stdout 
 
-    def written(self):
+    def written(self, obj):
         """
-        Helper method: parses the output file and returns a list of rows
+        Helper method: parses the file and returns a list of rows
         """
-        return [row.split(',') for row in self.output_file.getvalue().strip().split('\n')]
+        return [row.split(',') for row in obj.getvalue().strip().split('\n')]
 
+    def stdout_list(self, obj):
+        return obj.getvalue().strip().split('\n')
+
+    @unittest.skip('')
     def test_all_columns_are_present(self):
         """
         If one or more headers from the schema are missing,
@@ -45,6 +50,7 @@ class TestCSVUnifier(unittest.TestCase):
             self.assertEqual('All columns in schema must be present', new_stdout.getvalue().strip())
             self.assertEqual(0, len(self.output_file.getvalue()))
 
+    @unittest.skip('')
     def test_all_data_is_present(self):
         """
         For a given row, if values for all fields are present and valid,
@@ -64,7 +70,7 @@ class TestCSVUnifier(unittest.TestCase):
         cu.process(rows)
         cu.clean_up()
 
-        written = self.written() 
+        written = self.written(self.output_file) 
         self.assertEqual(len(rows), len(written))
         for i, row in enumerate(written):
             self.assertEqual(rows[i], row)
@@ -94,14 +100,17 @@ class TestCSVUnifier(unittest.TestCase):
         cu.process(rows)
         cu.clean_up()
 
-#        self.assertEqual('All columns in schema must be present', new_stdout.getvalue().strip())
-#        for i, line in new_stdout.getvalue().strip().split('\n'):
-
-        written = self.written() 
+        written = self.written(self.output_file) 
         self.assertEqual(2, len(written))
         for i, row in enumerate(written):
             self.assertEqual(rows[i], row)
 
+        stdout_list = self.stdout_list(new_stdout)
+        self.assertEqual(len(rows) - 2, len(stdout_list))
+        for i, line in enumerate(stdout_list):
+            self.assertEqual(self.row_error_prefix + str(rows[i + 2]), line)
+
+    @unittest.skip('')
     def test_nonconforming_data(self):
         """
         When a row contains data that does not conform to the schema,
@@ -127,11 +136,12 @@ class TestCSVUnifier(unittest.TestCase):
         cu.process(rows)
         cu.clean_up()
 
-        written = self.written() 
+        written = self.written(self.output_file) 
         self.assertEqual(2, len(written))
         for i, row in enumerate(written):
             self.assertEqual(rows[i], row)
 
+    @unittest.skip('')
     def test_columns_not_in_the_schema(self):
         """
         Columns not listed in the schema are ignored.
@@ -149,7 +159,8 @@ class TestCSVUnifier(unittest.TestCase):
         cu.process(rows)
         cu.clean_up()
 
-        written = self.written() 
+
+        written = self.written(self.output_file) 
         self.assertEqual(len(rows_expected_output), len(written))
         for i, row in enumerate(written):
             self.assertEqual(rows_expected_output[i], row)
