@@ -65,13 +65,11 @@ class TestCSVUnifier(unittest.TestCase):
         cu.process(rows)
         cu.clean_up()
 
-        sys.stdout = self.orig_stdout
         written = self.written() 
         self.assertEqual(len(rows), len(written))
         for i, row in enumerate(written):
             self.assertEqual(rows[i], row)
 
-    @unittest.skip('')
     def test_missing_data(self):
         """
         When the length of a row does not match the length of the header,
@@ -90,17 +88,17 @@ class TestCSVUnifier(unittest.TestCase):
          ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street']
          ]
 
+        sys.stdout = new_stdout = StringIO()
         cu = CSVUnifier(batch_size=self.batch_size, output_file=self.output_file) 
         cu.reset_header()
         cu.process(rows)
         cu.clean_up()
 
-        ctr = 0
-        for i, row in enumerate(csv.reader(self.output_file)):
-            ctr += 1
-            if i <= 1:
-                self.assertEqual(rows[i], row)
-        self.assertEqual(2, ctr)
+        written = self.written() 
+        self.assertEqual(2, len(written))
+        for i, row in enumerate(written):
+            self.assertEqual(rows[i], row)
+
 
     @unittest.skip('')
     def test_nonconforming_data(self):
