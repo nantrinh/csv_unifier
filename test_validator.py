@@ -82,23 +82,6 @@ class TestValidator(unittest.TestCase):
         for c in false_cases:
             self.assertFalse(v.redirect_link(c), c)
 
-    def test_account_id(self):
-        true_cases = ['1234342',
-                      '1',
-                      '2'
-                      ]
-
-        false_cases = ["",
-                       "abc",
-                       "123.0"
-                       ]
-
-        for c in true_cases:
-            self.assertTrue(v.account_id(c), c)
-
-        for c in false_cases:
-            self.assertFalse(v.account_id(c), c)
-
     def test_phone_number(self):
         true_cases = ['1234567',
                       '0000000'

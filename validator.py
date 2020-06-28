@@ -28,9 +28,6 @@ def redirect_link(s):
     """
     return re.match('^[a-z\d]+\.[a-z\d]+\/?[a-z\d]*$', s, re.IGNORECASE)
 
-def account_id(s):
-    return s.isnumeric()
-
 def phone_number(s):
     return s.isnumeric() and len(s) == 7
 
