@@ -108,7 +108,7 @@ class TestValidator(unittest.TestCase):
                       ]
 
         false_cases = ['',
-                      'hello',
+                       'hello',
                        ]
 
         for c in true_cases:

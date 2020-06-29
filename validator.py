@@ -1,22 +1,26 @@
 import re
 
+
 def provider_name(s):
-  """
-  one or more alphanumeric
-  zero or more alphanumeric, apostrophes, spaces, or underscores
-  """
-  return re.match("^[a-z\d]+[a-z\d' _]*$", s, re.IGNORECASE) 
+    """
+    one or more alphanumeric
+    zero or more alphanumeric, apostrophes, spaces, or underscores
+    """
+    return re.match(r"^[a-z\d]+[a-z\d' _]*$", s, re.IGNORECASE)
+
 
 def zipcode(s):
     return len(s) == 5 and s.isnumeric()
+
 
 def cost_per_ad_click(s):
     """
     one or more digits
     optional decimal
-    up to two digits 
+    up to two digits
     """
-    return re.match('^[\d]+\.?[\d]{0,2}$', s)
+    return re.match(r'^[\d]+\.?[\d]{0,2}$', s)
+
 
 def redirect_link(s):
     """
@@ -26,13 +30,16 @@ def redirect_link(s):
     optional slash
     zero or more alphanumeric characters
     """
-    return re.match('^[a-z\d]+\.[a-z\d]+\/?[a-z\d]*$', s, re.IGNORECASE)
+    return re.match(r'^[a-z\d]+\.[a-z\d]+\/?[a-z\d]*$', s, re.IGNORECASE)
+
 
 def phone_number(s):
     return len(s) == 0 or s.isnumeric() and len(s) == 7
 
+
 def address(s):
-    return re.match('^[a-z0-9]+(\s[a-z0-9]+)+$', s, re.IGNORECASE)
+    return re.match(r'^[a-z0-9]+(\s[a-z0-9]+)+$', s, re.IGNORECASE)
+
 
 def campaign_id(s):
-    return re.match('^[a-z]+[\d]*$', s, re.IGNORECASE)
+    return re.match(r'^[a-z]+[\d]*$', s, re.IGNORECASE)
