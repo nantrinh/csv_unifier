@@ -206,9 +206,31 @@ class TestCSVUnifier(unittest.TestCase):
         stdout_list = self.stdout_list(new_stdout)
         self.assertEqual(0, len(stdout_list))
 
-    @unittest.skip('')
     def test_columns_are_written_in_the_schema_order(self):
-        pass
+        rows = [
+            ['Provider Name', 'CampaignID', 'Cost Per Ad Click', 'Redirect Link', 'Phone Number', 'Address', 'Zipcode'],
+            ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
+        ]
+
+        rows = [list(reversed(row)) for row in rows] 
+
+        sys.stdout = new_stdout = StringIO()
+        cu = CSVUnifier(
+            batch_size=self.BATCH_SIZE,
+            output_file=self.output_file)
+        cu.reset_header()
+        cu.process(rows)
+        cu.clean_up()
+
+        written = self.written(self.output_file)
+        self.assertEqual(len(rows), len(written))
+        for i, row in enumerate(written):
+            self.assertEqual(list(reversed(rows[i])), row)
+
+        stdout_list = self.stdout_list(new_stdout)
+        self.assertEqual(0, len(stdout_list))
+
+
 
 
 if __name__ == "__main__":
