@@ -1,7 +1,7 @@
 """
 Test CSV Unifier
 
-Test outputs and stdout are expected to fit in memory.
+Note: test outputs and stdout are expected to fit in memory.
 """
 
 import sys
@@ -9,12 +9,31 @@ import csv
 from io import StringIO
 import unittest
 
-from main import CSVUnifier
+from csv_unifier import CSVUnifier
+import validator as v
 
 
 class TestCSVUnifier(unittest.TestCase):
     def setUp(self):
         self.output_file = StringIO()
+        self.SCHEMA = [
+            'Provider Name',
+            'CampaignID',
+            'Cost Per Ad Click',
+            'Redirect Link',
+            'Phone Number',
+            'Address',
+            'Zipcode',
+        ]
+        self.VALIDATOR_MAP = {
+            'Provider Name': v.provider_name,
+            'CampaignID': v.campaign_id,
+            'Cost Per Ad Click': v.cost_per_ad_click,
+            'Redirect Link': v.redirect_link,
+            'Phone Number': v.phone_number,
+            'Address': v.address,
+            'Zipcode': v.zipcode,
+        }
         self.BATCH_SIZE = 2
         self.COLUMN_MISSING_ERROR = 'All columns in schema must be present'
         self.INVALID_ROW_ERROR = 'Invalid row: '
@@ -58,7 +77,10 @@ class TestCSVUnifier(unittest.TestCase):
             rows = [header[:i] + header[i + 1:], data[:i] + data[i + 1:]]
             cu = CSVUnifier(
                 batch_size=self.BATCH_SIZE,
-                output_file=self.output_file)
+                output_file=self.output_file,
+                schema=self.SCHEMA,
+                validator_map=self.VALIDATOR_MAP
+            )
             cu.reset_header()
             cu.process(rows)
             cu.clean_up()
@@ -86,7 +108,10 @@ class TestCSVUnifier(unittest.TestCase):
         sys.stdout = new_stdout = StringIO()
         cu = CSVUnifier(
             batch_size=self.BATCH_SIZE,
-            output_file=self.output_file)
+            output_file=self.output_file,
+            schema=self.SCHEMA,
+            validator_map=self.VALIDATOR_MAP
+        )
         cu.reset_header()
         cu.process(rows)
         cu.clean_up()
@@ -122,7 +147,10 @@ class TestCSVUnifier(unittest.TestCase):
         sys.stdout = new_stdout = StringIO()
         cu = CSVUnifier(
             batch_size=self.BATCH_SIZE,
-            output_file=self.output_file)
+            output_file=self.output_file,
+            schema=self.SCHEMA,
+            validator_map=self.VALIDATOR_MAP
+        )
         cu.reset_header()
         cu.process(rows)
         cu.clean_up()
@@ -160,7 +188,10 @@ class TestCSVUnifier(unittest.TestCase):
         sys.stdout = new_stdout = StringIO()
         cu = CSVUnifier(
             batch_size=self.BATCH_SIZE,
-            output_file=self.output_file)
+            output_file=self.output_file,
+            schema=self.SCHEMA,
+            validator_map=self.VALIDATOR_MAP
+        )
         cu.reset_header()
         cu.process(rows)
         cu.clean_up()
@@ -193,7 +224,10 @@ class TestCSVUnifier(unittest.TestCase):
         sys.stdout = new_stdout = StringIO()
         cu = CSVUnifier(
             batch_size=self.BATCH_SIZE,
-            output_file=self.output_file)
+            output_file=self.output_file,
+            schema=self.SCHEMA,
+            validator_map=self.VALIDATOR_MAP
+        )
         cu.reset_header()
         cu.process(rows)
         cu.clean_up()
@@ -212,12 +246,15 @@ class TestCSVUnifier(unittest.TestCase):
             ["Auto R' Us", 'AUTO1', '15.00', 'autorus.com/auto1', '8675309', 'Burton Street', '78702'],
         ]
 
-        rows = [list(reversed(row)) for row in rows] 
+        rows = [list(reversed(row)) for row in rows]
 
         sys.stdout = new_stdout = StringIO()
         cu = CSVUnifier(
             batch_size=self.BATCH_SIZE,
-            output_file=self.output_file)
+            output_file=self.output_file,
+            schema=self.SCHEMA,
+            validator_map=self.VALIDATOR_MAP
+        )
         cu.reset_header()
         cu.process(rows)
         cu.clean_up()
@@ -229,8 +266,6 @@ class TestCSVUnifier(unittest.TestCase):
 
         stdout_list = self.stdout_list(new_stdout)
         self.assertEqual(0, len(stdout_list))
-
-
 
 
 if __name__ == "__main__":
