@@ -102,12 +102,13 @@ class TestValidator(unittest.TestCase):
     def test_address(self):
         true_cases = ['Burton Street',
                       'burton street',
-                      'hello world'
+                      'hello world',
+                      '45 Laurel Lane',
+                      '123 4567',
                       ]
 
         false_cases = ['',
-                       'Burton',
-                       '123 4567'
+                      'hello',
                        ]
 
         for c in true_cases:

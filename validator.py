@@ -32,7 +32,7 @@ def phone_number(s):
     return len(s) == 0 or s.isnumeric() and len(s) == 7
 
 def address(s):
-    return re.match('^[a-z]+ [a-z]+$', s, re.IGNORECASE)
+    return re.match('^[a-z0-9]+(\s[a-z0-9]+)+$', s, re.IGNORECASE)
 
 def campaign_id(s):
     return re.match('^[a-z]+[\d]*$', s, re.IGNORECASE)
