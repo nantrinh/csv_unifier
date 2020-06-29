@@ -1,5 +1,34 @@
 # The Zebra Data Engineering Interview Assignment
 
+## Instructions
+
+See [`instructions.pdf`](https://github.com/nantrinh/csv_unifier/blob/master/Instructions.pdf).
+
+The short version is:
+
+Given an input list of CSV files, convert the multiple files into a single CSV that matches the output schema described below:
+
+- "Provider Name": string, non-nullable
+- "CampaignID": string, non-nullable
+- "Cost Per Ad Click": float, non-nullable
+- "Redirect Link": string, non-nullable
+- "Phone Number": string, nullable
+- "Address": string, non-nullable
+- "Zipcode": string, non-nullable
+
+## How to run
+
+### Requirements
+
+- Python 3.8.2
+
+### Steps
+
+- Run `python main.py`
+- See `output.csv` for results.
+
+## Description of files
+
 `main.py` defines
 
 - the list of CSVs to be aggregated
@@ -19,14 +48,3 @@
 
 `test_validator.py` contains tests for the functions defined in `validator.py`.
 `test_csv_unifier.py` contains tests for the `CSVUnifier` class.
-
-## How to run
-
-### Requirements
-
-- Python 3.8.2
-
-### Steps
-
-Run `python main.py`
-Output will be written to `output.csv`.
