@@ -1,3 +1,9 @@
+"""
+Tools for aggregating data from multiple CSVs,
+validating with a given schema, and writing the
+aggregated output in batches to a specified output file.
+"""
+
 import csv
 
 from batch import Batch

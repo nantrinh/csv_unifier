@@ -1,4 +1,8 @@
 class Batch:
+    """
+    Calls flush_function and resets the data buffer
+    whenever capacity is reached.
+    """
     def __init__(self, capacity, flush_function):
         self.data = []
         self.flush_function = flush_function
