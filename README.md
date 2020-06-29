@@ -19,7 +19,7 @@ Given a list of CSV files and a schema, aggregate the data from the multiple fil
 - Run `python main.py`
 - See `output.csv` for results.
 
-## Description of files
+## Descriptions of files
 
 - [`main.py`](https://github.com/nantrinh/csv_unifier/blob/master/main.py) defines
 
