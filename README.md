@@ -30,7 +30,7 @@ Given a list of CSV files and a schema, aggregate the data from the multiple fil
   - a dictionary mapping each column name to a function that accepts a value and returns `True` if the value is a valid instance of that column, and `False` otherwise
 
 - [`csv_unifier.py`](https://github.com/nantrinh/csv_unifier/blob/master/csv_unifier.py) defines
-  - `unify_csvs`: a function called by `main.py` that opens up the relevant files and calls the necessary methods of the `CSVUnifier` class to process the data
+  - `unify_csvs`: a function called by `main.py` that opens up files and calls the necessary methods of the `CSVUnifier` class to process the data
   - `CSVUnifier`: a class that handles much of the operations required to aggregate, validate, and write the cleaned output to a file
 - [`batch.py`](https://github.com/nantrinh/csv_unifier/blob/master/batch.py) defines a `Batch` class used by the `CSVUnifier` class to handle writing data to a file in batches.
 - [`validator.py`](https://github.com/nantrinh/csv_unifier/blob/master/validator.py) defines a function for each column in the schema. Each function returns `True` if the value passed in conforms to a specified set of rules for that column and `False` otherwise.
